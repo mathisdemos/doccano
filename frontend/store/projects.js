@@ -24,8 +24,8 @@ export const getters = {
       return 'seq_annotations__isnull'
     } else if (state.current.project_type === 'Seq2seq') {
       return 'seq2seq_annotations__isnull'
-    } else if (state.current.project_type === 'Img2seq') {
-      return 'img2seq_annotations__isnull'
+    } else if (state.current.project_type === 'Image2seq') {
+      return 'image2seq_annotations__isnull'
     } else {
       return ''
     }
@@ -37,7 +37,7 @@ export const getters = {
       return 'sequence-labeling'
     } else if (state.current.project_type === 'Seq2seq') {
       return 'sequence-to-sequence'
-    } else if (state.current.project_type === 'Img2seq') {
+    } else if (state.current.project_type === 'Image2seq') {
       return 'image-to-sequence'
     } else {
       return ''
@@ -110,7 +110,7 @@ export const getters = {
         json,
         conll
       ]
-    } else if (state.current.project_type === 'Seq2seq' || state.current.project_type === 'Img2seq') {
+    } else if (state.current.project_type === 'Seq2seq' || state.current.project_type === 'Image2seq') {
       json.examples = [
         '{"text": "Hello!", "labels": ["こんにちは！"]}\n',
         '{"text": "Good morning.", "labels": ["おはようございます。"]}\n',

@@ -101,7 +101,7 @@ export default {
       } else if (this.projectType === 'Sequence to sequence') {
         return 'Seq2seq'
       } else if (this.projectType === 'Image to sequence') {
-        return 'Img2seq'
+        return 'Image2seq'
       }
     },
     getResourceType() {
@@ -112,7 +112,7 @@ export default {
       } else if (this.projectType === 'Sequence to sequence') {
         return 'Seq2seqProject'
       } else if (this.projectType === 'Image to sequence') {
-        return 'Img2seqProject'
+        return 'Image2seqProject'
       }
     },
     validate() {
