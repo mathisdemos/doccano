@@ -7,7 +7,7 @@ from .views import ProjectList, ProjectDetail
 from .views import LabelList, LabelDetail, ApproveLabelsAPI, LabelUploadAPI
 from .views import DocumentList, DocumentDetail
 from .views import AnnotationList, AnnotationDetail
-from .views import TextUploadAPI, TextDownloadAPI, CloudUploadAPI
+from .views import TextUploadAPI, TextDownloadAPI, CloudUploadAPI, ImageUploadAPI
 from .views import StatisticsAPI
 from .views import RoleMappingList, RoleMappingDetail, Roles
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('projects', ProjectList.as_view(), name='project_list'),
     path('users', Users.as_view(), name='user_list'),
     path('roles', Roles.as_view(), name='roles'),
+    path('image-upload', ImageUploadAPI.as_view(), name='image_uploader'),
     path('projects/<int:project_id>', ProjectDetail.as_view(), name='project_detail'),
     path('projects/<int:project_id>/statistics',
          StatisticsAPI.as_view(), name='statistics'),
