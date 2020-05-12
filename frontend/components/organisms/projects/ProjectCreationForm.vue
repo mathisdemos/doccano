@@ -70,7 +70,8 @@ export default {
       default: () => [
         'Text Classification',
         'Sequence Labeling',
-        'Sequence to sequence'
+        'Sequence to sequence',
+        'Image to sequence'
       ] // Todo: Get project types from backend server.
     }
   },
@@ -99,6 +100,8 @@ export default {
         return 'SequenceLabeling'
       } else if (this.projectType === 'Sequence to sequence') {
         return 'Seq2seq'
+      } else if (this.projectType === 'Image to sequence') {
+        return 'Img2seq'
       }
     },
     getResourceType() {
@@ -108,6 +111,8 @@ export default {
         return 'SequenceLabelingProject'
       } else if (this.projectType === 'Sequence to sequence') {
         return 'Seq2seqProject'
+      } else if (this.projectType === 'Image to sequence') {
+        return 'Img2seqProject'
       }
     },
     validate() {
