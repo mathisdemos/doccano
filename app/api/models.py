@@ -165,10 +165,10 @@ class Image2seqProject(Project):
         return Img2seqAnnotationSerializer
 
     def get_annotation_class(self):
-        return Img2seqAnnotation
+        return Image2seqAnnotation
 
     def get_storage(self, data):
-        #from .utils import Img2seqStorage
+        from .utils import Img2seqStorage
         return Img2seqStorage(data, self)
 
 
