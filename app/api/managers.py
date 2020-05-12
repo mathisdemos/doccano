@@ -31,3 +31,18 @@ class Seq2seqAnnotationManager(Manager):
             user_count[d['user__username']] += d['user__count']
 
         return label_count, user_count
+
+
+class Img2seqAnnotationManager(Manager):
+
+    def get_label_per_data(self, project):
+        label_count = Counter()
+        user_count = Counter()
+        docs = project.documents.all()
+        annotations = self.filter(document_id__in=docs.all())
+
+        for d in annotations.values('text', 'user__username').annotate(Count('text'), Count('user')):
+            label_count[d['text']] += d['text__count']
+            user_count[d['user__username']] += d['user__count']
+
+        return label_count, user_count

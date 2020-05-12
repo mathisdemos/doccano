@@ -10,15 +10,17 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.exceptions import ValidationError
 from polymorphic.models import PolymorphicModel
 
-from .managers import AnnotationManager, Seq2seqAnnotationManager
+from .managers import AnnotationManager, Seq2seqAnnotationManager, Img2seqAnnotationManager
 
 DOCUMENT_CLASSIFICATION = 'DocumentClassification'
 SEQUENCE_LABELING = 'SequenceLabeling'
 SEQ2SEQ = 'Seq2seq'
+IMG2SEQ = 'Image2seq'
 PROJECT_CHOICES = (
     (DOCUMENT_CLASSIFICATION, 'document classification'),
     (SEQUENCE_LABELING, 'sequence labeling'),
     (SEQ2SEQ, 'sequence to sequence'),
+    (IMG2SEQ, 'image to sequence'),
 )
 
 
@@ -143,6 +145,33 @@ class Seq2seqProject(Project):
         return Seq2seqStorage(data, self)
 
 
+class Image2seqProject(Project):
+
+    @property
+    def image(self):
+        return staticfiles_storage.url('assets/images/cats/seq2seq.jpg')
+
+    def get_bundle_name(self):
+        return 'img2seq'
+
+    def get_bundle_name_upload(self):
+        return 'upload_img2seq'
+
+    def get_bundle_name_download(self):
+        return 'download_img2seq'
+
+    def get_annotation_serializer(self):
+        from .serializers import Img2seqAnnotationSerializer
+        return Img2seqAnnotationSerializer
+
+    def get_annotation_class(self):
+        return Img2seqAnnotation
+
+    def get_storage(self, data):
+        #from .utils import Img2seqStorage
+        return Img2seqStorage(data, self)
+
+
 class Label(models.Model):
     PREFIX_KEYS = (
         ('ctrl', 'ctrl'),
@@ -237,6 +266,17 @@ class Seq2seqAnnotation(Annotation):
 
     document = models.ForeignKey(Document, related_name='seq2seq_annotations', on_delete=models.CASCADE)
     text = models.CharField(max_length=500)
+
+    class Meta:
+        unique_together = ('document', 'user', 'text')
+
+
+class Image2seqAnnotation(Annotation):
+    # Override AnnotationManager for custom functionality
+    objects = Img2seqAnnotationManager()
+
+    document = models.ForeignKey(Document, related_name='img2seq_annotations', on_delete=models.CASCADE)
+    text = models.TextField()
 
     class Meta:
         unique_together = ('document', 'user', 'text')

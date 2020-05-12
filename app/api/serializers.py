@@ -7,8 +7,8 @@ from rest_framework.exceptions import ValidationError
 
 
 from .models import Label, Project, Document, RoleMapping, Role
-from .models import TextClassificationProject, SequenceLabelingProject, Seq2seqProject
-from .models import DocumentAnnotation, SequenceAnnotation, Seq2seqAnnotation
+from .models import TextClassificationProject, SequenceLabelingProject, Seq2seqProject, Image2seqProject
+from .models import DocumentAnnotation, SequenceAnnotation, Seq2seqAnnotation, Image2seqAnnotation
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -133,12 +133,21 @@ class Seq2seqProjectSerializer(ProjectSerializer):
         read_only_fields = ProjectSerializer.Meta.read_only_fields
 
 
+class Img2seqProjectSerializer(ProjectSerializer):
+
+    class Meta:
+        model = Image2seqProject
+        fields = ProjectSerializer.Meta.fields
+        read_only_fields = ProjectSerializer.Meta.read_only_fields
+
+
 class ProjectPolymorphicSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         Project: ProjectSerializer,
         TextClassificationProject: TextClassificationProjectSerializer,
         SequenceLabelingProject: SequenceLabelingProjectSerializer,
-        Seq2seqProject: Seq2seqProjectSerializer
+        Seq2seqProject: Seq2seqProjectSerializer,
+        Image2seqProject: Img2seqProjectSerializer
     }
 
 
@@ -180,6 +189,15 @@ class Seq2seqAnnotationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seq2seqAnnotation
+        fields = ('id', 'text', 'user', 'document', 'prob')
+        read_only_fields = ('user',)
+
+
+class Img2seqAnnotationSerializer(serializers.ModelSerializer):
+    document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
+
+    class Meta:
+        model = Image2seqAnnotation
         fields = ('id', 'text', 'user', 'document', 'prob')
         read_only_fields = ('user',)
 
