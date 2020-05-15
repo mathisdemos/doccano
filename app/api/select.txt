@@ -1,0 +1,16 @@
+select files
+> on select
+> post files to worker pool
+> slice files into chunks
+> allocate chunks
+> mark worker as busy
+> get result
+> mark worker as not busy
+> allocate new chunk
+> if files are empty return files
+await files
+add metadata
+post messages in chunks
+
+
+worker thread

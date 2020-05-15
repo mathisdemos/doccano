@@ -6,7 +6,11 @@
       @download="exportDialog=true"
     />
     <base-dialog :dialog="importDialog">
+      <image-upload-form
+        v-if="currentProject.project_type === 'Image2seq'"
+      />
       <document-upload-form
+        v-else
         :upload-document="uploadDocument"
         :formats="getImportFormat"
         @close="importDialog=false"
@@ -28,13 +32,15 @@ import ActionMenu from '@/components/molecules/ActionMenu'
 import BaseDialog from '@/components/molecules/BaseDialog'
 import DocumentUploadForm from '@/components/organisms/documents/DocumentUploadForm'
 import DocumentExportForm from '@/components/organisms/documents/DocumentExportForm'
+import ImageUploadForm from '@/components/organisms/documents/ImageUploadForm'
 
 export default {
   components: {
     ActionMenu,
     BaseDialog,
     DocumentUploadForm,
-    DocumentExportForm
+    DocumentExportForm,
+    ImageUploadForm
   },
 
   data() {
@@ -49,7 +55,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('projects', ['getImportFormat', 'getExportFormat'])
+    ...mapGetters('projects', ['getImportFormat', 'getExportFormat', 'currentProject'])
   },
 
   created() {

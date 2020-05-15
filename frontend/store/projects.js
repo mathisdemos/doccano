@@ -110,7 +110,7 @@ export const getters = {
         json,
         conll
       ]
-    } else if (state.current.project_type === 'Seq2seq' || state.current.project_type === 'Image2seq') {
+    } else if (state.current.project_type === 'Seq2seq') {
       json.examples = [
         '{"text": "Hello!", "labels": ["こんにちは！"]}\n',
         '{"text": "Good morning.", "labels": ["おはようございます。"]}\n',
@@ -125,6 +125,16 @@ export const getters = {
       return [
         plain,
         csv,
+        json
+      ]
+    } else if (state.current.project_type === 'Image2seq') {
+      json.examples = [
+        '[\n',
+        '{"text": "Hello!", "labels": ["こんにちは！"]}\n',
+        '{"text": "Good morning.", "labels": ["おはようございます。"]}\n',
+        '{"text": "See you.", "labels": ["さようなら。"]}'
+      ]
+      return [
         json
       ]
     } else {
