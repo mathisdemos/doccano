@@ -15,7 +15,7 @@ from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework_csv.renderers import CSVRenderer
 
 from .filters import DocumentFilter
@@ -229,7 +229,7 @@ class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TextUploadAPI(APIView):
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
     permission_classes = [IsAuthenticated & IsProjectAdmin]
 
     def post(self, request, *args, **kwargs):
