@@ -15,7 +15,7 @@ from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser
+from rest_framework.parsers import MultiPartParser, JSONParser
 from rest_framework_csv.renderers import CSVRenderer
 
 from .filters import DocumentFilter
@@ -229,7 +229,7 @@ class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TextUploadAPI(APIView):
-    parser_classes = (MultiPartParser,)
+    parser_classes = (MultiPartParser, JSONParser)
     permission_classes = [IsAuthenticated & IsProjectAdmin]
 
     def post(self, request, *args, **kwargs):
@@ -405,40 +405,3 @@ class LabelUploadAPI(APIView):
         except IntegrityError:
             content = {'error': 'IntegrityError: you cannot create a label with same name or shortkey.'}
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
-class ImageUploadAPI(APIView):
-    parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticated & IsProjectAdmin]
-    supported_types = ('application/pdf', 'image/jpeg', 'image/png', 'image/tiff')
-    max_filesize = 25*10**7
-    fs = FileSystemStorage()
-
-    @transaction.atomic
-    def post(self, request, *args, **kwargs):
-        files_to_upload = []
-        # request.FILES is only available for "multipart/form-data"
-        for file_key, file_data_in_bytes in request.FILES.items():
-            mimetype = request.FILES[file_key].content_type
-            if mimetype not in supported_types:
-                return HttpResponse(status=409)
-            filesize = request.FILES[file_key].size
-            if filesize > max_filesize:
-                return HttpResponse(status=400)
-            filename = request.FILES[file_key].name
-            files_to_upload.append((filename, file_data_in_bytes))
-        uploaded_files = []
-        for file_to_upload in files_to_upload:
-            filename, byte_data = file_to_upload
-            random_filename = uuid.uuid4().hex
-            try:
-                savefile = fs.save(random_filename, byte_data)
-                saved_urls.append(
-                    dict(
-                        original_name=filename,
-                        generic_name=random_filename,
-                    )
-                )
-            except:
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        content = {'image_upload': saved_urls}
-        return Response(content, status=status.HTTP_201_CREATED)
