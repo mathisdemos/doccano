@@ -23,10 +23,10 @@
         </v-alert>
         <h2>Select images that you would like to upload</h2>
         <v-file-input
-          :accept="acceptType"
+          :accept="acceptedImageTypes"
           :multiple="true"
-          @change="transformImages"
-          :rules="uploadFileRules"
+          @change="images"
+          :rules="uploadImageRules"
           label="Image input"
         />
         <h2>Select a file containing metadata for your uploaded images</h2>
@@ -37,12 +37,15 @@
         </p>
         <code class="mb-10 pa-5 highlight">
           [
-            { "fileName": "img.jpg", "meta": {...}, "labels": ["label1"] },
-            { "fileName": "img2.jpg", "meta": {...}, "labels": ["label2"] }
+          { "fileName": "img.jpg", "meta": {...}, "labels": ["label1"] },
+          { "fileName": "img2.jpg", "meta": {...}, "labels": ["label2"] }
           ]
         </code>
         <v-file-input
-          @change="readMeta"
+          :disabled="!imagesUploaded"
+          @change="meta"
+          :accept="acceptedMetaType"
+          label="Metadata input"
         />
       </v-form>
     </template>
@@ -51,33 +54,38 @@
 
 <script>
 import BaseCard from '@/components/molecules/BaseCard'
-import { fileFormatRules, uploadFileRules } from '@/rules/index'
-import IMGService from '@/services/parsers/img.service'
+import { uploadImageRules } from '@/rules/index'
 
 export default {
   components: {
     BaseCard
   },
   props: {
+    match: {
+      type: Function,
+      required: true
+    },
+    readMeta: {
+      type: Function,
+      required: true
+    },
+    readImages: {
+      type: Function,
+      required: true
+    },
+    uploadImages: {
+      type: Function,
+      required: true
+    }
   },
   data() {
     return {
       valid: false,
-      file: null,
-      selectedFormat: null,
-      fileFormatRules,
-      uploadFileRules,
-      showError: false
-    }
-  },
-
-  computed: {
-    acceptType() {
-      if (this.selectedFormat) {
-        return this.selectedFormat.accept
-      } else {
-        return '.txt,.csv,.json,.jsonl'
-      }
+      uploadImageRules,
+      showError: false,
+      imagesUploaded: false,
+      acceptedImageTypes: '.png,.jpg',
+      acceptedMetaType: '.json'
     }
   },
 
@@ -92,17 +100,20 @@ export default {
       this.$refs.form.reset()
     },
     create() {
-      if (this.validate()) {}
+      if (this.validate()) {
+        this.uploadImages(this.$route.params.id)
+      }
     },
-    logChange(e) {
-      console.log(e)
-      IMGService.readImages(e).then((images) => {
-        this.images = images
+    images(e) {
+      this.readImages(e).then(() => {
+        this.imagesUploaded = true
       })
     },
-    readMeta(e) {
-      IMGService.readImageMeta(e).then((meta) => {
-        console.log(IMGService.matchMetaAndImages(meta, this.images))
+    meta(e) {
+      this.readMeta(e).then(() => {
+        this.match().then((errors) => {
+          console.log(errors)
+        })
       })
     }
   }

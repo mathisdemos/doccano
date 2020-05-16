@@ -8,6 +8,11 @@
     <base-dialog :dialog="importDialog">
       <image-upload-form
         v-if="currentProject.project_type === 'Image2seq'"
+        :upload-images="createImages"
+        :read-meta="insertMetaData"
+        :read-images="insertImages"
+        :match="matchMetaAndImages"
+        @close="importDialog=false"
       />
       <document-upload-form
         v-else
@@ -64,7 +69,8 @@ export default {
 
   methods: {
     ...mapActions('documents', ['uploadDocument', 'exportDocument']),
-    ...mapActions('projects', ['setCurrentProject'])
+    ...mapActions('projects', ['setCurrentProject']),
+    ...mapActions('images', ['insertImages', 'insertMetaData', 'createImages', 'matchMetaAndImages'])
   }
 }
 </script>

@@ -1,34 +1,33 @@
-/* eslint-disable no-unused-vars */
-class IMGService {
+class ImgParser {
   matchMetaAndImages(meta, images) {
+    const imgCpy = JSON.parse(JSON.stringify(images))
     const unmatchedImages = []
     meta.forEach((entry) => {
       const id = this.generateFileId(entry.fileName)
       const fileMeta = entry.meta || {}
-      const fileLabel = entry.label || null
+      const fileLabel = entry.labels || null
 
-      if (images[id]) {
-        images[id].meta = { ...images[id].meta, ...fileMeta }
-        if (fileLabel !== null) images[id].label = fileLabel
+      if (imgCpy[id]) {
+        imgCpy[id].meta = { ...imgCpy[id].meta, ...fileMeta }
+        if (fileLabel !== null) imgCpy[id].labels = fileLabel
       } else {
         unmatchedImages.push(entry.fileName)
       }
     })
     return {
-      images: images,
+      images: imgCpy,
       unmatchedImages: unmatchedImages
     }
   }
 
-  async readImageMeta(file) {
+  readImageMeta(file) {
     const reader = new FileReader()
     reader.readAsText(file)
-    const meta = await new Promise((resolve) => {
+    return new Promise((resolve) => {
       reader.onload = (e) => {
         resolve(JSON.parse(e.target.result))
       }
     })
-    return meta
   }
 
   async readImages(images) {
@@ -39,7 +38,8 @@ class IMGService {
       const imgObj = {
         meta: {
           id: name,
-          fileName: file.name
+          fileName: file.name,
+          __size: file.size
         },
         text: null
       }
@@ -64,4 +64,4 @@ class IMGService {
   }
 }
 
-export default new IMGService()
+export default new ImgParser()
