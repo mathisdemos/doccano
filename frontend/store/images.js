@@ -33,7 +33,6 @@ export const actions = {
     })
   },
   createImages({ state }, projectId) {
-    console.log(state.images)
     return ImageService.uploadImages(projectId, state.images)
   },
   matchMetaAndImages({ state, commit }) {

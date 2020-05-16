@@ -112,7 +112,7 @@ export default {
     meta(e) {
       this.readMeta(e).then(() => {
         this.match().then((errors) => {
-          console.log(errors)
+          console.log(errors) // TODO: handle errors
         })
       })
     }
