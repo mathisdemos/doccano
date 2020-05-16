@@ -26,7 +26,14 @@
       />
     </template>
     <template v-slot:item.text="{ item }">
-      <v-edit-dialog>
+      <v-img
+        v-if="currentProject.project_type === 'Image2seq'"
+        :src="item.text"
+        class="mb-1 mt-1"
+        max-height="80"
+        max-width="80"
+      />
+      <v-edit-dialog v-else>
         <span class="d-flex d-sm-none">{{ item.text | truncate(50) }}</span>
         <span class="d-none d-sm-flex">{{ item.text | truncate(200) }}</span>
         <template v-slot:input>
@@ -84,7 +91,7 @@ export default {
 
   computed: {
     ...mapState('documents', ['items', 'selected', 'loading', 'total']),
-    ...mapGetters('projects', ['getLink'])
+    ...mapGetters('projects', ['getLink', 'currentProject'])
   },
 
   watch: {
