@@ -1,7 +1,11 @@
+import path from 'path'
 import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'spa',
+  generate: {
+    dir: path.join(__dirname, './../app/server/static/new_frontend/')
+  },
   /*
   ** Headers of the page
   */
@@ -118,6 +122,7 @@ export default {
     /*
     ** You can extend webpack config here
     */
+    publicPath: 'static/new_frontend/',
     extend(config, ctx) {
       config.module.rules.push({
         test: /\.(txt|csv|conll|jsonl)$/i,
