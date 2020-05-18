@@ -203,6 +203,7 @@ class Seq2seqStorage(BaseStorage):
     @transaction.atomic
     def save(self, user):
         for data in self.data:
+            print(data)
             doc = self.save_doc(data)
             labels = self.extract_label(data)
             annotations = self.make_annotations(doc, labels)
@@ -217,19 +218,24 @@ class Seq2seqStorage(BaseStorage):
         return annotations
 
 class Img2seqStorage(BaseStorage):
-    """Store json for seq2seq.
-
-    The format is as follows:
-    {"text": "Hello, World!", "labels": ["こんにちは、世界!"]}
-    ...
+    """
+    Store json for Img2seq.
     """
     @transaction.atomic
     def save(self, user):
+        data_list = []
         for data in self.data:
-            doc = self.save_doc(data)
-            labels = self.extract_label(data)
-            annotations = self.make_annotations(doc, labels)
-            self.save_annotation(annotations, user)
+            data_list.append(
+                dict(
+                    text=data.get('text'),
+                    labels=data.get('labels', []),
+                    #meta=data.get('meta', '{}'),
+                )
+            )
+        doc = self.save_doc(data_list)
+        labels = self.extract_label(data_list)
+        annotations = self.make_annotations(doc, labels)
+        self.save_annotation(annotations, user)
 
     @classmethod
     def make_annotations(cls, docs, labels):
@@ -238,6 +244,7 @@ class Img2seqStorage(BaseStorage):
             for text in texts:
                 annotations.append({'document': doc.id, 'text': text})
         return annotations
+
 
 class FileParser(object):
 
