@@ -123,7 +123,7 @@ export default {
     ** You can extend webpack config here
     */
     extend(config, { isDev }) {
-      config.output.publicPath = isDev ? '_nuxt/' : 'static/new_frontend/'
+      if (!isDev) config.output.publicPath = 'static/new_frontend/'
       config.module.rules.push({
         test: /\.(txt|csv|conll|jsonl)$/i,
         loader: 'file-loader',
