@@ -4,7 +4,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   mode: 'spa',
   generate: {
-    dir: path.join(__dirname, './../app/server/static/new_frontend/')
+    dir: process.env.NODE_ENV === 'production' ? path.join(__dirname, './../app/server/static/new_frontend/') : '/'
   },
   /*
   ** Headers of the page
@@ -122,8 +122,8 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    publicPath: 'static/new_frontend/',
-    extend(config, ctx) {
+    extend(config, { isDev }) {
+      config.output.publicPath = isDev ? '_nuxt/' : 'static/new_frontend/'
       config.module.rules.push({
         test: /\.(txt|csv|conll|jsonl)$/i,
         loader: 'file-loader',
