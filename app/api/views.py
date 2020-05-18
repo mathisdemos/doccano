@@ -15,7 +15,7 @@ from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, JSONParser
+from rest_framework.parsers import MultiPartParser
 from rest_framework_csv.renderers import CSVRenderer
 
 from .filters import DocumentFilter
@@ -229,7 +229,7 @@ class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TextUploadAPI(APIView):
-    parser_classes = (MultiPartParser, JSONParser)
+    parser_classes = (MultiPartParser,)
     permission_classes = [IsAuthenticated & IsProjectAdmin]
 
     def post(self, request, *args, **kwargs):
@@ -267,6 +267,25 @@ class TextUploadAPI(APIView):
             return ExcelParser()
         else:
             raise ValidationError('format {} is invalid.'.format(file_format))
+
+
+class ImageUploadAPI(APIView):
+    permission_classes = [IsAuthenticated & IsProjectAdmin]
+
+    def post(self, request, *args, **kwargs):
+        images_data = request.data
+        self.save_image(
+            user=request.user,
+            images_list=images_data,
+            project_id=kwargs['project_id']
+        )
+        return Response(status=status.HTTP_201_CREATED)
+
+    @classmethod
+    def save_image(cls, user, images_list, project_id):
+        project = get_object_or_404(Project, pk=project_id)
+        storage = project.get_storage(images_list)
+        storage.save(user)
 
 
 class CloudUploadAPI(APIView):
