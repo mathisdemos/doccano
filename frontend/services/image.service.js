@@ -18,7 +18,7 @@ class ImageService {
   }
 
   uploadChunk(projectId, chunk) {
-    return this.request.post(`/projects/${projectId}/docs/upload`, chunk)
+    return this.request.post(`/projects/${projectId}/docs/upload-images`, chunk)
   }
 
   chunkArray(arr) {
