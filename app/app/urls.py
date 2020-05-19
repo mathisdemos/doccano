@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import PasswordResetView, LogoutView
@@ -44,7 +45,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('v1/', include('api.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if 'cloud_browser' in settings.INSTALLED_APPS:
     urlpatterns.append(path('cloud-storage/', include('cloud_browser.urls')))

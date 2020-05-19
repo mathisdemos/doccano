@@ -1,8 +1,11 @@
+import base64
 import csv
 import io
 import itertools
 import json
+import os
 import re
+import uuid
 from collections import defaultdict
 
 import conllu
@@ -203,7 +206,6 @@ class Seq2seqStorage(BaseStorage):
     @transaction.atomic
     def save(self, user):
         for data in self.data:
-            print(data)
             doc = self.save_doc(data)
             labels = self.extract_label(data)
             annotations = self.make_annotations(doc, labels)
@@ -223,19 +225,40 @@ class Img2seqStorage(BaseStorage):
     """
     @transaction.atomic
     def save(self, user):
+        project_id = self.project.id
         data_list = []
         for data in self.data:
+            base64_string = data.get('text')
+            labels = data.get('labels', [])
+            image_meta = data.get('meta', {})
+            image_path = self.save_image(base64_string, image_meta, project_id)
             data_list.append(
                 dict(
-                    text=data.get('text'),
-                    labels=data.get('labels', []),
-                    #meta=data.get('meta', '{}'),
+                    text=image_path,
+                    labels=labels,
+                    meta=json.dumps(image_meta),
                 )
             )
         doc = self.save_doc(data_list)
         labels = self.extract_label(data_list)
         annotations = self.make_annotations(doc, labels)
         self.save_annotation(annotations, user)
+
+    @classmethod
+    def save_image(cls, base64_string, image_meta, project_id):
+        image_path = os.path.join(settings.MEDIA_ROOT, str(project_id))
+        if not os.path.exists(image_path):
+            os.makedirs(image_path)
+        random_filename = uuid.uuid4().hex
+        file_extension = image_meta.get('fileName', '').split('.')[-1]
+        filename = '.'.join((random_filename, file_extension))
+        filepath = os.path.join(image_path, filename)
+        cleaned_base64_string = ','.join(base64_string.split(',')[1:])
+        image_data = base64.b64decode(cleaned_base64_string)
+        with open(filepath, 'wb') as f:
+            f.write(image_data)
+        url_path = os.path.join(settings.MEDIA_URL, str(project_id), filename)
+        return url_path
 
     @classmethod
     def make_annotations(cls, docs, labels):
