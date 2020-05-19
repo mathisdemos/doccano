@@ -86,6 +86,7 @@ junitxml/
 local_settings.py
 *.sqlite3
 staticfiles/
+mediafiles/
 
 # Flask stuff:
 instance/
