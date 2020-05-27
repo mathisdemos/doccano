@@ -265,6 +265,8 @@ class Img2seqStorage(BaseStorage):
         annotations = []
         for doc, texts in zip(docs, labels):
             for text in texts:
+                if not text.strip():
+                    continue
                 annotations.append({'document': doc.id, 'text': text})
         return annotations
 
