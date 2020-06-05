@@ -47,5 +47,21 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+from django.views.generic import RedirectView
+from django.conf.urls import url
+urlpatterns += [
+    url(r'^favicon\.ico$', RedirectView.as_view(url='/static/favicon.ico', permanent=True)),
+    url(r'^images\/feature1\.png$', RedirectView.as_view(url='/static/images/feature1.png', permanent=True)),
+    url(r'^images\/feature2\.png$', RedirectView.as_view(url='/static/images/feature2.png', permanent=True)),
+    url(r'^images\/feature3\.png$', RedirectView.as_view(url='/static/images/feature3.png', permanent=True)),
+    url(r'^images\/ner_demo\.png$', RedirectView.as_view(url='/static/images/ner_demo.png', permanent=True)),
+    url(r'^images\/vbanner\.jpg$', RedirectView.as_view(url='/static/images/vbanner.jpg', permanent=True)),
+]
+
+from django.views.generic import TemplateView
+urlpatterns += [
+    url(r'^.*', TemplateView.as_view(template_name='index.html'))
+]
+
 if 'cloud_browser' in settings.INSTALLED_APPS:
     urlpatterns.append(path('cloud-storage/', include('cloud_browser.urls')))
