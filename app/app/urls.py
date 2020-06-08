@@ -60,7 +60,7 @@ urlpatterns += [
 
 from django.views.generic import TemplateView
 urlpatterns += [
-    url(r'^.*', TemplateView.as_view(template_name='index.html'))
+    url(r'^(?!admin).*', TemplateView.as_view(template_name='index.html'), name='catch-all-except-adminpages')
 ]
 
 if 'cloud_browser' in settings.INSTALLED_APPS:
