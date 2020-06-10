@@ -46,7 +46,7 @@ export const uploadFileRules = [
 // Rules for user.
 export const passwordRules = [
   v => !!v || 'Password is required',
-  v => (v && v.length <= 30) || 'Password must be less than 30 characters'
+  v => (v && v.length <= 128) || 'Password must be less than 128 characters'
 ]
 
 // rules for Images
